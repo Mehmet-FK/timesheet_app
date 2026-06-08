@@ -10,7 +10,7 @@ This setup runs:
 The public domain is:
 
 ```text
-timesheet.mehmet-fk.com
+timesheet.mehmetfk.com
 ```
 
 ## 1. Point DNS to the VPS
@@ -18,7 +18,7 @@ timesheet.mehmet-fk.com
 Create an `A` record at your DNS provider:
 
 ```text
-timesheet.mehmet-fk.com -> YOUR_SERVER_IPV4
+timesheet.mehmetfk.com -> YOUR_SERVER_IPV4
 ```
 
 If your VPS has IPv6, optionally add an `AAAA` record too.
@@ -26,7 +26,7 @@ If your VPS has IPv6, optionally add an `AAAA` record too.
 Wait until DNS resolves:
 
 ```bash
-dig timesheet.mehmet-fk.com
+dig timesheet.mehmetfk.com
 ```
 
 ## 2. Open firewall ports
@@ -69,7 +69,7 @@ Use a strong `POSTGRES_PASSWORD`. Avoid special URL characters such as `@`, `/`,
 Set:
 
 ```env
-DOMAIN=timesheet.mehmet-fk.com
+DOMAIN=timesheet.mehmetfk.com
 LETSENCRYPT_EMAIL=your-real-email@example.com
 COOKIE_SECURE=true
 HTTP_PORT=80
@@ -91,7 +91,7 @@ Let's Encrypt certificate, then reloads Nginx.
 Open:
 
 ```text
-https://timesheet.mehmet-fk.com
+https://timesheet.mehmetfk.com
 ```
 
 ## 6. Create the first admin
@@ -103,7 +103,7 @@ docker compose exec app npm run admin:create -- mk@alef.at 'Admin@Alef0415+'
 Then open:
 
 ```text
-https://timesheet.mehmet-fk.com/admin
+https://timesheet.mehmetfk.com/admin
 ```
 
 ## 7. Renew certificates

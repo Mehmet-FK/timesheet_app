@@ -7,7 +7,7 @@ if [ -f .env ]; then
   set +a
 fi
 
-domain="${DOMAIN:-timesheet.mehmet-fk.com}"
+domain="${DOMAIN:-timesheet.mehmetfk.com}"
 email="${LETSENCRYPT_EMAIL:-mk@alef.at}"
 rsa_key_size=4096
 
