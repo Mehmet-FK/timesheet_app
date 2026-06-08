@@ -4,15 +4,15 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-timesheet_app}
-      POSTGRES_USER: ${POSTGRES_USER:-timesheet_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_USER: ${POSTGRES_USER:-AlefAdmin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Alef0415+}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-timesheet_user} -d ${POSTGRES_DB:-timesheet_app}",
+          "pg_isready -U ${POSTGRES_USER:-AlefAdmin} -d ${POSTGRES_DB:-timesheet_app}",
         ]
       interval: 10s
       timeout: 5s
@@ -31,7 +31,7 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
-      DATABASE_URL: postgres://${POSTGRES_USER:-timesheet_user}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-timesheet_app}
+      DATABASE_URL: postgres://${POSTGRES_USER:-AlefAdmin}:${POSTGRES_PASSWORD:-Alef0415+}@postgres:5432/${POSTGRES_DB:-timesheet_app}
 
   nginx:
     image: nginx:1.27-alpine
