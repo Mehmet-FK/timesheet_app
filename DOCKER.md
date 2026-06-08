@@ -1,6 +1,49 @@
-# Docker deployment on Ubuntu VPS
+# Docker HTTPS deployment on Ubuntu VPS
 
-## 1. Install Docker
+This setup runs:
+
+- Next.js app privately inside Docker
+- PostgreSQL with a persistent Docker volume
+- Nginx on ports `80` and `443`
+- Certbot for Let's Encrypt certificates
+
+The public domain is:
+
+```text
+timesheet.mehmet-fk.com
+```
+
+## 1. Point DNS to the VPS
+
+Create an `A` record at your DNS provider:
+
+```text
+timesheet.mehmet-fk.com -> YOUR_SERVER_IPV4
+```
+
+If your VPS has IPv6, optionally add an `AAAA` record too.
+
+Wait until DNS resolves:
+
+```bash
+dig timesheet.mehmet-fk.com
+```
+
+## 2. Open firewall ports
+
+On Ubuntu with UFW:
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status
+```
+
+Also make sure your VPS provider firewall allows inbound `80` and `443`.
+
+## 3. Install Docker
 
 ```bash
 sudo apt update
@@ -13,7 +56,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-## 2. Configure environment
+## 4. Configure environment
 
 ```bash
 cp .env.docker.example .env
@@ -23,52 +66,86 @@ nano .env
 Use a strong `POSTGRES_PASSWORD`. Avoid special URL characters such as `@`, `/`,
 `:` and `#` unless you also URL-encode them.
 
-Keep `COOKIE_SECURE=false` while you open the app through plain HTTP, for
-example `http://YOUR_SERVER_IP:3000`. Set it to `true` after you put the app
-behind HTTPS.
+Set:
 
-## 3. Build and start
-
-```bash
-docker compose up -d --build
+```env
+DOMAIN=timesheet.mehmet-fk.com
+LETSENCRYPT_EMAIL=your-real-email@example.com
+COOKIE_SECURE=true
+HTTP_PORT=80
+HTTPS_PORT=443
 ```
 
-The app container waits for PostgreSQL and runs all migrations automatically.
+## 5. Create the first certificate
+
+Run this only the first time:
+
+```bash
+chmod +x scripts/init-letsencrypt.sh scripts/renew-letsencrypt.sh
+./scripts/init-letsencrypt.sh
+```
+
+The script creates a temporary certificate, starts Nginx, requests the real
+Let's Encrypt certificate, then reloads Nginx.
 
 Open:
 
 ```text
-http://YOUR_SERVER_IP:3000
+https://timesheet.mehmet-fk.com
 ```
 
-## 4. Create the first admin
+## 6. Create the first admin
 
 ```bash
-docker compose exec app npm run admin:create -- admin@example.com secure-password
+docker compose exec app npm run admin:create -- mk@alef.at 'Admin@Alef0415+'
 ```
 
 Then open:
 
 ```text
-http://YOUR_SERVER_IP:3000/admin
+https://timesheet.mehmet-fk.com/admin
 ```
+
+## 7. Renew certificates
+
+Let's Encrypt certificates are valid for about 90 days. Add a cron job:
+
+```bash
+crontab -e
+```
+
+Add:
+
+```cron
+0 3 * * * cd /path/to/timesheet_app && ./scripts/renew-letsencrypt.sh >> /var/log/timesheet-certbot.log 2>&1
+```
+
+Certbot renews only when needed.
 
 ## Useful commands
 
 ```bash
+docker compose ps
 docker compose logs -f app
+docker compose logs -f nginx
 docker compose logs -f postgres
 docker compose restart app
 docker compose down
 ```
 
-To stop without deleting the database:
+Rebuild after code changes:
+
+```bash
+docker compose up -d --build
+```
+
+Stop without deleting the database:
 
 ```bash
 docker compose down
 ```
 
-To delete the database volume too:
+Delete the database and certificates too:
 
 ```bash
 docker compose down -v
