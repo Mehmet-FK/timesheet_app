@@ -19,10 +19,11 @@ fi
 
 echo "Creating temporary certificate for $domain..."
 docker compose run --rm --entrypoint "\
+  sh -c 'mkdir -p /etc/letsencrypt/live/$domain && \
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1 \
     -keyout /etc/letsencrypt/live/$domain/privkey.pem \
     -out /etc/letsencrypt/live/$domain/fullchain.pem \
-    -subj /CN=localhost" certbot
+    -subj /CN=localhost'" certbot
 
 echo "Starting app and nginx..."
 docker compose up -d --build nginx
