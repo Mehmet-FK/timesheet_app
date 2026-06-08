@@ -23,6 +23,10 @@ nano .env
 Use a strong `POSTGRES_PASSWORD`. Avoid special URL characters such as `@`, `/`,
 `:` and `#` unless you also URL-encode them.
 
+Keep `COOKIE_SECURE=false` while you open the app through plain HTTP, for
+example `http://YOUR_SERVER_IP:3000`. Set it to `true` after you put the app
+behind HTTPS.
+
 ## 3. Build and start
 
 ```bash

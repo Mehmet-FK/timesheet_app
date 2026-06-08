@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE } from "../../../../lib/auth/session";
+import { SESSION_COOKIE, shouldUseSecureCookies } from "../../../../lib/auth/session";
 import { makeSessionToken, verifyPassword } from "../../../../lib/auth/password";
 import { findCompanyByEmail, getCompany } from "../../../../lib/repositories/companiesRepository";
 import { createSession } from "../../../../lib/repositories/sessionsRepository";
@@ -20,7 +20,7 @@ export async function POST(request) {
   response.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(),
     path: "/",
     expires: expiresAt,
   });

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE } from "../../../../../lib/auth/session";
+import { ADMIN_SESSION_COOKIE, shouldUseSecureCookies } from "../../../../../lib/auth/session";
 import { makeSessionToken, verifyPassword } from "../../../../../lib/auth/password";
 import { findAdminByEmail } from "../../../../../lib/repositories/adminsRepository";
 import { createAdminSession } from "../../../../../lib/repositories/adminSessionsRepository";
@@ -20,7 +20,7 @@ export async function POST(request) {
   response.cookies.set(ADMIN_SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(),
     path: "/",
     expires: expiresAt,
   });
